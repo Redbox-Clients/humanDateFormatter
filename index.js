@@ -21,7 +21,12 @@ app.post('/parse', (req, res) => {
   }
 
   // Convert to Europe/Dublin timezone using Luxon
-  const dt = DateTime.fromJSDate(parsedDate, { zone: 'Europe/Dublin' });
+  let dt = DateTime.fromJSDate(parsedDate, { zone: 'Europe/Dublin' });
+
+  // ✅ Default early morning times to PM if no am/pm was specified
+  if (dt.hour >= 0 && dt.hour <= 8) {
+    dt = dt.plus({ hours: 12 });
+  }
 
   res.json({
     resolvedDateTime: dt.toISO(),
